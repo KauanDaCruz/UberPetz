@@ -2,30 +2,43 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Modal } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
-import DriverInfo from './DriverInfo'; // Importe o componente DriverInfo
+import DriverInfo from './DriverInfo';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#F5F5F5',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   map: {
     flex: 1,
+    width: '100%',
   },
   actionButtonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
   actionButton: {
-    backgroundColor: 'blue',
-    padding: 12,
+    flex: 1,
+    backgroundColor: '#007AFF',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 8,
+    marginHorizontal: 8,
   },
   actionButtonText: {
     color: 'white',
-    fontWeight: 'bold',
+    fontSize: 16,
   },
-  // ... outros estilos
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
 });
 
 export default function App() {
@@ -34,26 +47,38 @@ export default function App() {
   const [showDriverInfo, setShowDriverInfo] = useState(false);
 
   useEffect(() => {
-    // ... código anterior para obter a localização do usuário
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        console.error('Permissão de localização não concedida');
+        return;
+      }
+
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      setUserLocation({ latitude, longitude });
+    })();
   }, []);
 
   const handlePress = (event) => {
     const { latitude, longitude } = event.nativeEvent.coordinate;
-    // Quando o usuário clica no mapa, definimos a localização de destino
     setDestination({ latitude, longitude });
   };
 
   const handleRequestRide = () => {
-    // Quando o usuário solicita a viagem, você pode definir as informações do motorista e custo da viagem
-    // Isso é apenas um exemplo, você deve obter esses dados de onde quer que eles venham
     const driverName = 'Nome do Motorista';
-    const estimatedCost = 25.00; // Altere para a estimativa real
-
+    const estimatedCost = 25.00;
     setShowDriverInfo(true);
   };
 
   const handleClearDestination = () => {
     setDestination(null);
+  };
+
+  const handleShowUserLocation = async () => {
+    const location = await Location.getCurrentPositionAsync({});
+    const { latitude, longitude } = location.coords;
+    setUserLocation({ latitude, longitude });
   };
 
   return (
@@ -63,28 +88,21 @@ export default function App() {
         style={styles.map}
         onPress={handlePress}
         initialRegion={{
-          latitude: -23.9330843, // Latitude inicial
-          longitude: -46.3017265, // Longitude inicial
+          latitude: -23.9330843,
+          longitude: -46.3017265,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
       >
-        {/* Marcador para a localização atual */}
         {userLocation && (
-          <Marker coordinate={userLocation}>
-            {/* ... */}
-          </Marker>
+          <Marker coordinate={userLocation} title="Sua Localização" />
         )}
 
-        {/* Marcador para o local de destino */}
         {destination && (
-          <Marker coordinate={destination}>
-            {/* ... */}
-          </Marker>
+          <Marker coordinate={destination} title="Destino" />
         )}
       </MapView>
 
-      {/* Interface de ação */}
       <View style={styles.actionButtonContainer}>
         <TouchableOpacity
           style={styles.actionButton}
@@ -96,13 +114,19 @@ export default function App() {
         <TouchableOpacity
           style={styles.actionButton}
           onPress={handleRequestRide}
-          disabled={!destination} // Desabilita o botão se não houver destino definido
+          disabled={!destination}
         >
           <Text style={styles.actionButtonText}>Solicitar Viagem</Text>
         </TouchableOpacity>
+        
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={handleShowUserLocation}
+        >
+          <Text style={styles.actionButtonText}>Mostrar Localização</Text>
+        </TouchableOpacity>
       </View>
 
-      {/* Modal de informações do motorista e custo da viagem */}
       <Modal
         visible={showDriverInfo}
         animationType="slide"
@@ -111,7 +135,7 @@ export default function App() {
         <View style={styles.modalContainer}>
           <DriverInfo
             driverName="Nome do Motorista"
-            estimatedCost={25.00} // Altere para a estimativa real
+            estimatedCost={25.00}
             onCancel={() => setShowDriverInfo(false)}
           />
         </View>
