@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
+
 const DriverInfo = ({ driverName, estimatedCost, onCancel }) => {
   return (
     <View style={styles.container}>

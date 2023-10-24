@@ -1,45 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, Modal } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Modal, Linking } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import DriverInfo from './DriverInfo';
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  map: {
-    flex: 1,
-    width: '100%',
-  },
-  actionButtonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  actionButton: {
-    flex: 1,
-    backgroundColor: '#007AFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 8,
-    marginHorizontal: 8,
-  },
-  actionButtonText: {
-    color: 'white',
-    fontSize: 16,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-});
+import { styles } from './styles';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import config from './config';
 
 export default function App() {
   const [destination, setDestination] = useState(null);
@@ -66,9 +32,17 @@ export default function App() {
   };
 
   const handleRequestRide = () => {
-    const driverName = 'Nome do Motorista';
-    const estimatedCost = 25.00;
-    setShowDriverInfo(true);
+    if (destination) {
+      const latitude = destination.latitude;
+      const longitude = destination.longitude;
+      const label = 'Destino'; // Nome do local de destino
+
+      const url = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}&query_place=${label}`;
+      Linking.openURL(url);
+    } else {
+      // Trate o caso em que nenhum destino tenha sido definido
+      // Você pode exibir uma mensagem de erro, por exemplo.
+    }
   };
 
   const handleClearDestination = () => {
@@ -83,6 +57,29 @@ export default function App() {
 
   return (
     <View style={styles.container}>
+      <GooglePlacesAutocomplete
+        placeholder="Pesquisar cidade ou localidade"
+        onPress={(data, details = null) => {
+          const { lat, lng } = details.geometry.location;
+          setDestination({ latitude: lat, longitude: lng });
+        }}
+        query={{
+          key: config.GoogleApi,
+          language: 'pt', // Idioma desejado
+          types: '(cities)', // Restringir a pesquisa a cidades
+        }}
+        enablePoweredByContainer={false}
+        styles={{
+          container: {
+            position: 'absolute',
+            top: 100, // Ajuste conforme necessário
+            left: 0,
+            right: 0,
+            zIndex: 1,
+          },
+        }}
+      />
+
       <MapView
         provider={PROVIDER_GOOGLE}
         style={styles.map}
@@ -134,7 +131,7 @@ export default function App() {
       >
         <View style={styles.modalContainer}>
           <DriverInfo
-            driverName="Nome do Motorista"
+            driverName="Felipe"
             estimatedCost={25.00}
             onCancel={() => setShowDriverInfo(false)}
           />
