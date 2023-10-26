@@ -84,6 +84,7 @@ export default function App() {
         provider={PROVIDER_GOOGLE}
         style={styles.map}
         onPress={handlePress}
+        showsUserLocation
         initialRegion={{
           latitude: -23.9330843,
           longitude: -46.3017265,

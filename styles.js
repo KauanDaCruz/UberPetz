@@ -11,6 +11,8 @@ export const styles = StyleSheet.create({
   map: {
     flex: 1,
     width: '100%',
+    height: '100%',
+    top: 30,
   },
   actionButtonContainer: {
     flexDirection: 'row',
