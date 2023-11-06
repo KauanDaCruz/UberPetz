@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, Modal, Linking } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
-import DriverInfo from '../../../DriverInfo';
-import { styles } from '../../../styles';
-import Search from '../Search';
-import Details from '../Details';
-import Directions from '../../Directions/index';
+import DriverInfo from '../DriverInfo';
+import { styles } from '../styles';
+import Search from '../src/components/Search/index';
+import Details from '../src/components/Details/index';
+import Directions from '../src/Directions/index';
+
 
 
 export default function Map(){

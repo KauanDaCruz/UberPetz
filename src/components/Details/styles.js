@@ -13,7 +13,6 @@ export const Container = styled.View`
   border: 1px solid #ddd;
   align-items: center;
   padding: 20px;
-  zIndex: 1000;
 `;
 
 export const TypeTitle = styled.Text`
