@@ -6,11 +6,16 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import MapScreen from './screens/MapScreen';
+import {initializeApp} from 'firebase/app';
+import { getAuth } from "firebase/auth";
+import fireConfig from './firebase'
 
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const app = initializeApp(fireConfig);
+  const auth = getAuth(app);
   return (
     
     <NavigationContainer>
