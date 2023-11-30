@@ -1,6 +1,10 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import firebase from 'firebase/compat/app';
+import  {  getDatabase  } from 'firebase/database'
+
+
 
 
 
@@ -12,5 +16,14 @@ const firebaseConfig = {
   messagingSenderId: "965873187585",
   appId: "1:965873187585:web:593ff5e00441376b403900"
 };
+
+if (firebase.apps.length === 0) {
+  firebase.initializeApp(firebaseConfig);
+
+}
+
+const db = getDatabase();
+
+export { db }
 
 export default firebaseConfig

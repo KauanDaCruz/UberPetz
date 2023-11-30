@@ -21,10 +21,10 @@ export default class Details extends Component {
 
         <TypeImage source={uberx} />
         <TypeTitle>Petz10</TypeTitle>
-        <TypeDescription>R$6,00</TypeDescription>
+        <TypeDescription>R$35,00</TypeDescription>
 
         <RequestButton onPress={() => {}}>
-          <RequestButtonText>SOLICITAR UBERX</RequestButtonText>
+          <RequestButtonText>SOLICITAR PETZ10X</RequestButtonText>
         </RequestButton>
       </Container>
     );

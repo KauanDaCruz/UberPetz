@@ -1,58 +1,51 @@
-import React, { Component, useEffect, useState } from 'react'
-import { Text, StyleSheet, View, KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native'
-import { withTheme } from 'styled-components'
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
+import { Text, StyleSheet, View, KeyboardAvoidingView, TextInput, TouchableOpacity } from 'react-native';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigation } from '@react-navigation/native';
 
-
-
 const LoginScreen = () => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-  
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    const navigation = useNavigation()
+    const navigation = useNavigation();
 
     useEffect(() => {
         const auth = getAuth();
-        const unsubcribe = auth.onAuthStateChanged(user => {
+        const unsubscribe = auth.onAuthStateChanged(user => {
             if (user) {
-                navigation.navigate("Home")
+                navigation.replace('Home');
             }
-        })
+        });
 
-        return unsubcribe
-    }, [])
+        return unsubscribe;
+    }, []);
 
     const handleSignup = () => {
         const auth = getAuth();
         createUserWithEmailAndPassword(auth, email, password)
             .then(userCredential => {
-
-                console.log("certinho!!")
+                console.log('certinho!!');
                 const user = userCredential.user;
-                console.log('Registered  with:', user.email)
+                console.log('Registered with:', user.email);
             })
-            .catch(error => alert(error.message))
-    }
+            .catch(error => alert(error.message));
+    };
 
-    const handLeLogin = () => {
-        auth
-            .signInWithEmailAndPassword(email, password)
-            .then((userCredential) => {
+    const handleLogin = () => {
+        const auth = getAuth();
+        signInWithEmailAndPassword(auth, email, password)
+            .then(userCredential => {
                 const user = userCredential.user;
                 console.log('logged in with:', user.email);
-
             })
-    }
+            .catch(error => alert('Error: ' + error.message));
+    };
+
     return (
-        <KeyboardAvoidingView
-            style={styles.container}
-            behavior="padding"
-
-
-        >
-
+        <KeyboardAvoidingView style={styles.container} behavior="padding">
+            <View style={styles.logoContainer}>
+                <Text style={styles.logoText}>AnimalAdventures</Text>
+            </View>
             <View style={styles.inputContainer}>
                 <TextInput
                     placeholder="Email"
@@ -61,36 +54,25 @@ const LoginScreen = () => {
                     style={styles.input}
                 />
                 <TextInput
-                    placeholder="Passaword"
+                    placeholder="Senha"
                     value={password}
                     onChangeText={text => setPassword(text)}
                     style={styles.input}
                     secureTextEntry
                 />
-
-
             </View>
 
             <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                    onPress={{ handLeLogin }}
-                    style={styles.button}
-                >
+                <TouchableOpacity onPress={handleLogin} style={styles.button}>
                     <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
-                <TouchableOpacity
-                    onPress={handleSignup}
-                    style={[styles.button, styles.buttonOutline]}
-                >
-                    <Text style={styles.buttonOutlineText}>Register</Text>
+                <TouchableOpacity>
+                    <Text style={styles.buttonOutlineText}>Não tem registro? Clique aqui</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
-    )
-}
-
-export default LoginScreen
-
+    );
+};
 
 const styles = StyleSheet.create({
     container: {
@@ -98,9 +80,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    logoContainer: {
+        marginBottom: 20,
+    },
+    logoText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+    },
     inputContainer: {
         width: '80%',
-
     },
     input: {
         backgroundColor: 'white',
@@ -108,15 +96,12 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         borderRadius: 10,
         marginTop: 5,
-
-
     },
     buttonContainer: {
-        width: "60%",
+        width: '60%',
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 40,
-
     },
     button: {
         backgroundColor: '#0782f9',
@@ -130,9 +115,7 @@ const styles = StyleSheet.create({
         marginTop: 5,
         borderColor: '#0782f9',
         borderWidth: 2,
-
     },
-
     buttonText: {
         color: 'white',
         fontWeight: '700',
@@ -142,6 +125,8 @@ const styles = StyleSheet.create({
         color: '#0782f9',
         fontWeight: '700',
         fontSize: 16,
+        marginTop: 25
     },
-})
+});
 
+export default LoginScreen;
